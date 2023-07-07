@@ -53,5 +53,28 @@ namespace PRN231MVCCMS.Controllers
             }
             return View(sub);
 		}
-	}
+        public async Task<IActionResult> WeekAsync(int week,int id)
+        {
+            Test sub = new Test();
+            string Url = "http://localhost:5200/api/Tests/test";
+            using (HttpClient client = new HttpClient())
+            {
+
+                using (HttpResponseMessage res = await client.GetAsync(Url + "?id="+id+"&week="+week))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string data = await content.ReadAsStringAsync();
+                        //   Console.WriteLine($"{data}");
+                        sub = JsonConvert.DeserializeObject<Test>(data);
+
+                    }
+
+
+                }
+
+            }
+            return View(sub);
+        }
+    }
 }
