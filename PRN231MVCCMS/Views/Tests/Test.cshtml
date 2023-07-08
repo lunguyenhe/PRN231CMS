@@ -1,0 +1,46 @@
+﻿@using PRN231APICMS.Mapper
+@using PRN231APICMS.Models;
+@model List<TestQuestionDTO>
+@{
+	char c = 'A';
+	List<Option> op = ViewData["listq"] as List<Option>;
+	int i=0;
+
+	}
+
+	<form method="post" asp-action="Answer"> 
+	@foreach(var item in Model)
+{
+	i++;
+	<div class="panel panel-understanding-check">
+		<input type="hidden" value="@item.TestId" name="id">
+			<div class="form-group">
+				<label for="radio">@i .@item.Content</label>
+
+				@foreach( Option o in op)
+				{
+					if (item.QuestionId == o.QuestionId)
+					{
+						<div class="radio">
+							<label>
+								<input type="radio" data-question-number="1" name="question-@item.QuestionId" id="bsr-radios-97468235240" data-alert-type="alert-danger" data-comment="<strong>Incorrect</strong><br>Lorem ipsum dolor sit amet, consectetur adipisicing elit." value="@o.OptionId">
+								@o.Content
+							</label>
+						</div>
+					}
+					@*for (c = 'A'; c <= 'D'; c++)
+					{*@
+						
+						
+					@*}*@
+					
+				}
+		
+			
+
+	
+	</div>
+	</div>
+	}
+<input type="submit" value="Submit" name="submit" />
+</form>
