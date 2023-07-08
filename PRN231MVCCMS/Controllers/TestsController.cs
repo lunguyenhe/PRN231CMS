@@ -165,6 +165,7 @@ namespace PRN231MVCCMS.Controllers
 								u.UserId = 5;
 								u.TestId = id;
 								u.QuestionId = t.QuestionId;
+								u.QuestionName = t.Content;
 								u.IsCorrect = o.IsCorrect;
 								u.OptionName = o.Content;
 								u.QuestionCount = list.Count();

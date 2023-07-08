@@ -74,6 +74,32 @@ namespace PRN231MVCCMS.Controllers
                 }
 
             }
+            Assignment assignment = new Assignment();
+            string Url2 = "http://localhost:5200/api/Assignment/week";
+            using (HttpClient client = new HttpClient())
+            {
+
+                using (HttpResponseMessage res = await client.GetAsync(Url2 + "?id="+id+"&week="+week))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string data = await content.ReadAsStringAsync();
+                        //   Console.WriteLine($"{data}");
+                        assignment = JsonConvert.DeserializeObject<Assignment>(data);
+                        if (assignment != null)
+                        {
+                            ViewData["Assign"] = assignment;
+
+                        }
+                      
+
+                    }
+
+
+                }
+
+            }
+
             return View(sub);
         }
     }

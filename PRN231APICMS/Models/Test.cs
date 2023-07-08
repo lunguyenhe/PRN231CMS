@@ -16,6 +16,7 @@ namespace PRN231APICMS.Models
         public int? TimeDate { get; set; }
         public int? SubjectId { get; set; }
         public int? WeekNumber { get; set; }
+        public bool? Status { get; set; }
         public virtual Subject? Subject { get; set; }
         public virtual ICollection<TestQuestion> TestQuestions { get; set; }
         public virtual ICollection<UserQuestion> UserQuestions { get; set; }
