@@ -51,22 +51,7 @@ namespace PRN231MVCCMS.Controllers
 				}
 
 			}
-			if (submit != null)
-			{
-				string useoption = Request.Form["question"];
-				Console.WriteLine(useoption);
-				foreach (TestQuestionDTO t in list)
-				{
-					//string questionhtml = "question-" + t.QuestionId;
-					foreach (Option o in listq)
-					{
-
-
-
-					}
-
-				}
-			}
+			
 			return View(list);
 		}
 

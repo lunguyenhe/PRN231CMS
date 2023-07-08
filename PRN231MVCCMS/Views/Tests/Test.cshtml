@@ -7,8 +7,9 @@
 	int i=0;
 
 	}
+<h3 id="countdown">00:00</h3>
 
-	<form method="post" asp-action="Answer"> 
+<form id="myForm1" method="post" asp-action="Answer">
 	@foreach(var item in Model)
 {
 	i++;
@@ -44,3 +45,35 @@
 	}
 <input type="submit" value="Submit" name="submit" />
 </form>
+<script>
+	// Lấy thời gian hiện tại
+	var now = new Date().getTime();
+
+	// Đặt thời gian kết thúc đếm ngược (thêm 45 phút)
+	var countdownTime = new Date(now + 0.2 * 60000).getTime();
+
+	// Cập nhật đồng hồ đếm ngược mỗi giây
+	var x = setInterval(function() {
+
+		// Lấy thời gian hiện tại
+		var now = new Date().getTime();
+
+		// Tính toán khoảng thời gian còn lại
+		var distance = countdownTime - now;
+
+		// Tính toán giờ, phút, giây từ khoảng thời gian còn lại
+		var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+		var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+		var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+		// Hiển thị thời gian trên trang web
+		document.getElementById("countdown").innerHTML =   minutes + ":" + seconds;
+
+		// Khi đếm ngược kết thúc, hiển thị thông báo
+		if (distance < 0) {
+			clearInterval(x);
+			document.getElementById("countdown").innerHTML = "Kết thúc";
+			document.getElementById("myForm1").submit();
+		}
+	}, 1000);
+</script>
