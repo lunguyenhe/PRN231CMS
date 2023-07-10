@@ -32,7 +32,7 @@ namespace PRN231APICMS.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server =localhost; database =PRN231CMS1;uid=sa;pwd=123456;");
+                optionsBuilder.UseSqlServer("server =localhost; database =PRN231CMS111;uid=sa;pwd=123456;");
             }
         }
 
@@ -52,10 +52,17 @@ namespace PRN231APICMS.Models
                     .HasMaxLength(50)
                     .IsUnicode(false);
 
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
                 entity.HasOne(d => d.Subject)
                     .WithMany(p => p.Assignments)
                     .HasForeignKey(d => d.SubjectId)
-                    .HasConstraintName("FK__Assignmen__Subje__267ABA7A");
+                    .HasConstraintName("FK__Assignmen__Subje__34C8D9D1");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Assignments)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Assignmen__UserI__403A8C7D");
             });
 
             modelBuilder.Entity<Option>(entity =>
@@ -69,7 +76,7 @@ namespace PRN231APICMS.Models
                 entity.HasOne(d => d.Question)
                     .WithMany(p => p.Options)
                     .HasForeignKey(d => d.QuestionId)
-                    .HasConstraintName("FK__Options__Questio__3A81B327");
+                    .HasConstraintName("FK__Options__Questio__35BCFE0A");
             });
 
             modelBuilder.Entity<Question>(entity =>
@@ -103,12 +110,19 @@ namespace PRN231APICMS.Models
                 entity.Property(e => e.SubjectName)
                     .HasMaxLength(50)
                     .IsUnicode(false);
+
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Subjects)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Subjects__UserID__4316F928");
             });
 
             modelBuilder.Entity<SubmittedAssignment>(entity =>
             {
                 entity.HasKey(e => e.SubmissionId)
-                    .HasName("PK__Submitte__449EE105ED4BB85B");
+                    .HasName("PK__Submitte__449EE1054937458F");
 
                 entity.Property(e => e.SubmissionId).HasColumnName("SubmissionID");
 
@@ -121,28 +135,39 @@ namespace PRN231APICMS.Models
                 entity.HasOne(d => d.Assignment)
                     .WithMany(p => p.SubmittedAssignments)
                     .HasForeignKey(d => d.AssignmentId)
-                    .HasConstraintName("FK__Submitted__Assig__2E1BDC42");
+                    .HasConstraintName("FK__Submitted__Assig__36B12243");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.SubmittedAssignments)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__Submitted__UserI__2F10007B");
+                    .HasConstraintName("FK__Submitted__UserI__37A5467C");
             });
 
             modelBuilder.Entity<Test>(entity =>
             {
-                entity.Property(e => e.TestId).HasColumnName("TestID");
+                entity.HasNoKey();
 
                 entity.Property(e => e.SubjectId).HasColumnName("SubjectID");
+
+                entity.Property(e => e.TestId)
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("TestID");
 
                 entity.Property(e => e.TestName)
                     .HasMaxLength(100)
                     .IsUnicode(false);
 
+                entity.Property(e => e.UserId).HasColumnName("UserID");
+
                 entity.HasOne(d => d.Subject)
-                    .WithMany(p => p.Tests)
+                    .WithMany()
                     .HasForeignKey(d => d.SubjectId)
-                    .HasConstraintName("FK__Tests__SubjectID__31EC6D26");
+                    .HasConstraintName("FK__Tests__SubjectID__3A81B327");
+
+                entity.HasOne(d => d.User)
+                    .WithMany()
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("FK__Tests__UserID__4222D4EF");
             });
 
             modelBuilder.Entity<TestQuestion>(entity =>
@@ -156,12 +181,7 @@ namespace PRN231APICMS.Models
                 entity.HasOne(d => d.Question)
                     .WithMany(p => p.TestQuestions)
                     .HasForeignKey(d => d.QuestionId)
-                    .HasConstraintName("FK__TestQuest__Quest__37A5467C");
-
-                entity.HasOne(d => d.Test)
-                    .WithMany(p => p.TestQuestions)
-                    .HasForeignKey(d => d.TestId)
-                    .HasConstraintName("FK__TestQuest__TestI__36B12243");
+                    .HasConstraintName("FK__TestQuest__Quest__38996AB5");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -181,13 +201,13 @@ namespace PRN231APICMS.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Users)
                     .HasForeignKey(d => d.RoleId)
-                    .HasConstraintName("FK__Users__RoleID__2B3F6F97");
+                    .HasConstraintName("FK__Users__RoleID__3F466844");
             });
 
             modelBuilder.Entity<UserQuestion>(entity =>
             {
                 entity.HasKey(e => e.UserQuestions)
-                    .HasName("PK__UserQues__7B1AE41068FB93B3");
+                    .HasName("PK__UserQues__7B1AE41062785E91");
 
                 entity.Property(e => e.OptionId).HasColumnName("OptionID");
 
@@ -200,22 +220,17 @@ namespace PRN231APICMS.Models
                 entity.HasOne(d => d.Option)
                     .WithMany(p => p.UserQuestions)
                     .HasForeignKey(d => d.OptionId)
-                    .HasConstraintName("FK__UserQuest__Optio__3F466844");
+                    .HasConstraintName("FK__UserQuest__Optio__3B75D760");
 
                 entity.HasOne(d => d.Question)
                     .WithMany(p => p.UserQuestions)
                     .HasForeignKey(d => d.QuestionId)
-                    .HasConstraintName("FK__UserQuest__Quest__3E52440B");
-
-                entity.HasOne(d => d.Test)
-                    .WithMany(p => p.UserQuestions)
-                    .HasForeignKey(d => d.TestId)
-                    .HasConstraintName("FK__UserQuest__TestI__3D5E1FD2");
+                    .HasConstraintName("FK__UserQuest__Quest__3C69FB99");
 
                 entity.HasOne(d => d.User)
                     .WithMany(p => p.UserQuestions)
                     .HasForeignKey(d => d.UserId)
-                    .HasConstraintName("FK__UserQuest__UserI__403A8C7D");
+                    .HasConstraintName("FK__UserQuest__UserI__3E52440B");
             });
 
             OnModelCreatingPartial(modelBuilder);

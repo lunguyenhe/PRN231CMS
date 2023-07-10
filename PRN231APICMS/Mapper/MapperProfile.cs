@@ -8,6 +8,7 @@ namespace PRN231APICMS.Mapper
         public MapperProfile()
         {
             CreateMap<TestQuestion, TestQuestionDTO>().ForMember(des => des.Content, act =>act.MapFrom(src=>src.Question.Content));
+            CreateMap<SubmittedAssignment, SubmitAssignmentDTO>().ForMember(des => des.Email, act => act.MapFrom(src => src.User.Email));
         }
     }
 }

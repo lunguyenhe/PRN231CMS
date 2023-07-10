@@ -13,7 +13,6 @@ namespace PRN231APICMS.Models
 
         public virtual Option? Option { get; set; }
         public virtual Question? Question { get; set; }
-        public virtual Test? Test { get; set; }
         public virtual User? User { get; set; }
     }
 }

@@ -12,6 +12,15 @@ namespace PRN231APICMS
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddCors(act =>
+            {
+                act.AddPolicy("_MainPolicy", options =>
+                {
+                    options.AllowAnyHeader();
+                    options.AllowAnyMethod();
+                    options.AllowAnyOrigin();
+                });
+            });
 
             var app = builder.Build();
 
@@ -21,7 +30,7 @@ namespace PRN231APICMS
                 app.UseSwagger();
                 app.UseSwaggerUI();
             }
-
+            app.UseCors("_MainPolicy");
             app.UseAuthorization();
 
 

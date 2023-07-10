@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using PRN231APICMS.Models;
 
-namespace PRN231APICMS.Models
+namespace PRN231APICMS.Mapper
 {
-    public partial class SubmittedAssignment
+    public class SubmitAssignmentDTO
     {
         public int SubmissionId { get; set; }
         public int? AssignmentId { get; set; }
         public int? UserId { get; set; }
+        public string? Email { get; set; }
         public DateTime? SubmissionDate { get; set; }
         public string? File { get; set; }
-        public virtual Assignment? Assignment { get; set; }
-        public virtual User? User { get; set; }
+
     }
 }

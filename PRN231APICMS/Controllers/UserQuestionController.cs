@@ -26,5 +26,26 @@ namespace PRN231APICMS.Controllers
 			}
 
 		}
+		[HttpGet("id")]
+		public IActionResult Get(int id, int testid)
+		{
+			try
+			{
+				using (PRN231CMS1Context context = new PRN231CMS1Context())
+				{
+					var data = context.UserQuestions.ToList().FirstOrDefault(s => s.UserId == id && s.TestId == testid);
+					if (data == null)
+					{
+						return Ok(false);
+					}
+					return Ok(true);
+				}
+			}
+			catch (Exception ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
+		}
 	}
 }

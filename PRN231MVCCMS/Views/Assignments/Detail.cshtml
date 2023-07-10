@@ -1,5 +1,47 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using PRN231APICMS.Models
+@model Assignment
 @{
+    SubmittedAssignment subass = ViewData["subass"] as SubmittedAssignment;
 }
+<h1>@Model.Title</h1>
+<div class="alert alert-primary" role="alert">
+     <a href="#" class="alert-link">Description</a>. @Model.Description
+</div>
+<div class="alert alert-secondary" role="alert">
+  <a href="#" class="alert-link">Deadline</a>.">@Model.Deadline
+</div>
+<div class="alert alert-primary" role="alert">
+    File<a href="~/uploads/@Model.File" download>@Model.File</a>
+</div>
+@if (subass.File == null)
+{<div class="alert alert-primary" role="alert">
+    Status:<a href="#">Not Attemp</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-primary" role="alert">
+    Status:<a href="#">@subass.File</a>
+</div>
+}
+@if(subass.SubmissionDate < Model.Deadline)
+{
+    <div class="alert alert-success" role="alert">
+        Status:<a href="#">@subass.SubmissionDate</a>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger" role="alert">
+        Status:<a href="#">@subass.SubmissionDate</a>
+    </div>
+    
+}
+
+
+<form asp-action="UploadFile" asp-controller="Assignments" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="assId" value="@Model.AssignmentId"/>
+    <label for="file">Chọn tệp tin:</label>
+    <input type="file" name="file" id="file" />
+    <input type="submit" value="Tải lên" />
+</form>

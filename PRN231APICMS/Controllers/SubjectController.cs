@@ -51,5 +51,26 @@ namespace PRN231APICMS.Controllers
             }
 
         }
+        [HttpGet("IdFindAll")]
+        public IActionResult GetFindAll(int id)
+        {
+            try
+            {
+                using (PRN231CMS1Context context = new PRN231CMS1Context())
+                {
+                    var data = context.Subjects.ToList().FindAll(s => s.UserId == id);
+                    if (data == null)
+                    {
+                        return NotFound();
+                    }
+                    return Ok(data);
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+        }
     }
 }

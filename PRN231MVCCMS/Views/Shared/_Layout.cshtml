@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@inject IHttpContextAccessor HttpContextAccessor;
+@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +13,10 @@
     <link rel="stylesheet" href="~/PRN231MVCCMS.styles.css" asp-append-version="true" />
 </head>
 <body>
+    @{
+        string user = HttpContextAccessor.HttpContext.Session.GetString("Email") ?? "";
+        int role = HttpContextAccessor.HttpContext.Session.GetInt32("role") ?? 5;
+    }
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -20,11 +28,31 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
+
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
+                        @if (role != 5)
+                        {<h5>Hello,@user</h5>
+                              <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Logout">Logout</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Subject" asp-action="Index">Subject</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Login">Login</a>
+                            </li>
+                        }
+                        @if(role==2){
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Assignments" asp-action="Create">Create Assignment</a>
+                            </li>
+                            
+                        }
+
                     </ul>
                 </div>
             </div>

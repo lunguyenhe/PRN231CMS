@@ -1,9 +1,14 @@
 ﻿@using PRN231APICMS.Models
+@inject IHttpContextAccessor HttpContextAccessor;
+@addTagHelper *,Microsoft.AspNetCore.Mvc.TagHelpers
 @model Test
 @{
     Assignment assignment = ViewData["Assign"] as Assignment;
 }
-
+@{
+    string user = HttpContextAccessor.HttpContext.Session.GetString("Email") ?? "";
+    int role = HttpContextAccessor.HttpContext.Session.GetInt32("role") ?? 5;
+}
 <ol class="list-group list-group-numbered">
 
     
@@ -16,19 +21,35 @@
             <span class="badge bg-primary rounded-pill"></span>
           
         </li>
-    @if (assignment.AssignmentId != 0)
+
+    @if (role == 3)
+    {
+        @if (assignment.AssignmentId != 0)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-6 me-auto">
+                    <a asp-action="Detail" asp-controller="Assignments" asp-route-id="@assignment.AssignmentId">
+                        <div class="fw-bold">@assignment.Title</div>
+                    </a>
+                </div>
+                <span class="badge bg-primary rounded-pill"></span>
+
+            </li>
+        }
+
+    }
+    @if (role == 2)
     {
         <li class="list-group-item d-flex justify-content-between align-items-start">
             <div class="ms-6 me-auto">
-                <a asp-action="Test" asp-controller="Tests" asp-route-id="@assignment.AssignmentId">
+                <a asp-action="ListAssignment" asp-controller="Assignments" asp-route-id="@assignment.AssignmentId">
                     <div class="fw-bold">@assignment.Title</div>
                 </a>
             </div>
             <span class="badge bg-primary rounded-pill"></span>
 
         </li>
-        
     }
-    
+   
 
 </ol>

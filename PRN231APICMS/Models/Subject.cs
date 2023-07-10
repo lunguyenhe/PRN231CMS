@@ -8,15 +8,15 @@ namespace PRN231APICMS.Models
         public Subject()
         {
             Assignments = new HashSet<Assignment>();
-            Tests = new HashSet<Test>();
         }
 
         public int SubjectId { get; set; }
         public string? SubjectName { get; set; }
         public string? Description { get; set; }
         public int? Weeks { get; set; }
+        public int? UserId { get; set; }
 
+        public virtual User? User { get; set; }
         public virtual ICollection<Assignment> Assignments { get; set; }
-        public virtual ICollection<Test> Tests { get; set; }
     }
 }

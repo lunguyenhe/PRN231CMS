@@ -16,8 +16,11 @@ namespace PRN231APICMS.Models
         public string? Title { get; set; }
         public string? Description { get; set; }
         public DateTime? Deadline { get; set; }
+        public int? UserId { get; set; }
+        public string? File { get; set; }
 
         public virtual Subject? Subject { get; set; }
+        public virtual User? User { get; set; }
         public virtual ICollection<SubmittedAssignment> SubmittedAssignments { get; set; }
     }
 }

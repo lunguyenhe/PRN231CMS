@@ -7,52 +7,74 @@ namespace PRN231MVCCMS.Controllers
 {
 	public class TestsController : Controller
 	{
+		private readonly IHttpContextAccessor _httpContextAccessor;
+
+		public TestsController(IHttpContextAccessor httpContextAccessor)
+		{
+			_httpContextAccessor = httpContextAccessor;
+		}
+
 		public async Task<IActionResult> TestAsync(int? id, string? submit)
 		{
-			List<TestQuestionDTO> list = new List<TestQuestionDTO>();
-			List<Option> listq = new List<Option>();
-			string Url = "http://localhost:5200/api/TestQuestion/Id?id=";
-			using (HttpClient client = new HttpClient())
+			int iduser = _httpContextAccessor.HttpContext.Session.GetInt32("UserId") ?? 0;
+			if (iduser == 0)
 			{
-
-				using (HttpResponseMessage res = await client.GetAsync(Url + id))
-				{
-					using (HttpContent content = res.Content)
-					{
-
-						string data = await content.ReadAsStringAsync();
-						//   Console.WriteLine($"{data}");
-						list = JsonConvert.DeserializeObject<List<TestQuestionDTO>>(data);
-
-					}
-
-
-				}
-
+				return RedirectToAction("Login", "Home");
 			}
+			bool checktest = await CheckUserTestAsync(iduser, (int)id);
 
-			string Url2 = "http://localhost:5200/api/Question/options";
-			using (HttpClient client = new HttpClient())
+			if (checktest == false)
 			{
-
-				using (HttpResponseMessage res = await client.GetAsync(Url2))
+				List<TestQuestionDTO> list = new List<TestQuestionDTO>();
+				List<Option> listq = new List<Option>();
+				string Url = "http://localhost:5200/api/TestQuestion/Id?id=";
+				using (HttpClient client = new HttpClient())
 				{
-					using (HttpContent content = res.Content)
+
+					using (HttpResponseMessage res = await client.GetAsync(Url + id))
 					{
+						using (HttpContent content = res.Content)
+						{
 
-						string data = await content.ReadAsStringAsync();
-						//   Console.WriteLine($"{data}");
-						listq = JsonConvert.DeserializeObject<List<Option>>(data);
+							string data = await content.ReadAsStringAsync();
+							//   Console.WriteLine($"{data}");
+							list = JsonConvert.DeserializeObject<List<TestQuestionDTO>>(data);
 
-						ViewData["listq"] = listq;
+						}
+
+
 					}
-
 
 				}
 
+				string Url2 = "http://localhost:5200/api/Question/options";
+				using (HttpClient client = new HttpClient())
+				{
+
+					using (HttpResponseMessage res = await client.GetAsync(Url2))
+					{
+						using (HttpContent content = res.Content)
+						{
+
+							string data = await content.ReadAsStringAsync();
+							//   Console.WriteLine($"{data}");
+							listq = JsonConvert.DeserializeObject<List<Option>>(data);
+
+							ViewData["listq"] = listq;
+						}
+
+
+					}
+
+				}
+
+				return View(list);
+			}
+			else
+			{
+				return RedirectToAction("Index", "Subject");
 			}
 			
-			return View(list);
 		}
 
 
@@ -116,10 +138,61 @@ namespace PRN231MVCCMS.Controllers
 
 			return false;
 		}
+		private async Task<bool> AddUserQuestionAsync(UserQuestion u)
+		{
 
+			string url = "http://localhost:5200/api/UserQuestion";
+
+			using (HttpClient client = new HttpClient())
+			{
+				using (HttpResponseMessage res = await client.PostAsJsonAsync(url, u))
+				{
+					using (HttpContent content = res.Content)
+					{
+						if (res.IsSuccessStatusCode)
+						{
+
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+		private async Task<bool> CheckUserTestAsync(int userId,int testid)
+		{
+			bool check = false;
+			string url = "http://localhost:5200/api/UserQuestion/";
+
+			using (HttpClient client = new HttpClient())
+			{
+				using (HttpResponseMessage res = await client.GetAsync(url+ "id?id="+userId+ "&testid="+testid))
+				{
+					using (HttpContent content = res.Content)
+					{
+						if (res.IsSuccessStatusCode)
+						{
+						
+							string data = await content.ReadAsStringAsync();
+							check = bool.Parse(data);
+							return check;
+							
+						}
+					}
+				}
+			}
+
+			return false;
+		}
 		[HttpPost]
 		public async Task<IActionResult> AnswerAsync(int? id, string submit)
 		{
+			int iduser = _httpContextAccessor.HttpContext.Session.GetInt32("UserId") ?? 0;
+			if (iduser == 0)
+			{
+				return RedirectToAction("Login", "Home");
+			}
 			if (id == null)
 			{
 				// Handle invalid id here
@@ -129,6 +202,7 @@ namespace PRN231MVCCMS.Controllers
 			List<TestQuestionDTO> list = await GetTestQuestionsAsync(id);
 			List<Option> listq = await GetOptionsAsync();
 			List<UserQuestionDTO> listu = new List<UserQuestionDTO>();
+			bool check = false;
 			if (!string.IsNullOrEmpty(submit))
 			{
 				foreach (TestQuestionDTO t in list)
@@ -147,21 +221,34 @@ namespace PRN231MVCCMS.Controllers
 							{
 								UserQuestionDTO u = new UserQuestionDTO();
 								u.OptionId=useoption;
-								u.UserId = 5;
+								u.UserId = iduser;
 								u.TestId = id;
 								u.QuestionId = t.QuestionId;
 								u.QuestionName = t.Content;
 								u.IsCorrect = o.IsCorrect;
 								u.OptionName = o.Content;
 								u.QuestionCount = list.Count();
+
+								UserQuestion u2= new UserQuestion();
+								u2.OptionId = useoption;
+								u2.UserId = iduser;
+								u2.TestId = id;
+								u2.QuestionId= t.QuestionId;
+								 check = await AddUserQuestionAsync(u2);
 								listu.Add(u);
 							}
 						}
 					}
 				}
 			}
-
-			return View(listu);
+			if (check == true)
+			{
+				return View(listu);
+			}
+			else
+			{
+				return RedirectToAction("Error", "Home");
+			}
 		}
 	}
 }

@@ -10,6 +10,5 @@ namespace PRN231APICMS.Models
         public int? QuestionId { get; set; }
 
         public virtual Question? Question { get; set; }
-        public virtual Test? Test { get; set; }
     }
 }
